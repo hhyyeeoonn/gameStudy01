@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<head>
+    <link rel="stylesheet" href="gameStudy.css">
+    <script defer src="gameStudy.js"></script>
+    <!--
+        
+        head 태그 사이에 위치 + defer
+        HTML 파싱 >> JavaScript 파일 만나면 병렬적으로 다운로드 >> HTML 전체 파싱 후 JavaScript 파일 실행
+
+        head 태그 사이에 위치 + async
+        HTML 파싱 >> JavaScript 파일 만나면 병렬적으로 다운로드 >> JavaScript 파일 다운 완료되면 HTML 파싱 정지 >> JavaScript 파일 실행 >> HTML 이어서 파싱
+    -->
+</head>
+<body>
+    <div class="wrapper">
+        <div id="frame"></div>
+    </div>
+
+    <button class="restartBtn" onclick="restartBtnClick()">다시하기</button>
+    
+</body>

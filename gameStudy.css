@@ -1,0 +1,46 @@
+.wrapper {
+    position: relative;
+}
+#frame {
+    width: 800px;
+    height: 600px;
+    margin-top: 400px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.container {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    perspective: 2000px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+}
+.card {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    transition: 0.3s;
+    transform-style: preserve-3d;
+}
+.card__front {
+    background-color: aqua;
+}
+.card__back {
+    background-color: bisque;
+}
+.card__front, .card__back {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    border: 1px solid black;
+    width: 100px;
+    height: 100px;
+    backface-visibility: hidden;
+}
+.container.flipped .card {
+    transform: rotateY(180deg);
+}
