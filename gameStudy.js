@@ -2,7 +2,6 @@ const $frame = document.querySelector("#frame");
 
 let cardType = [];
 let shuffledCard = [];
-let cardIndex = [];
 let clickedCardIndex = 0;
 
 // 카드 배열 만들기
@@ -17,6 +16,7 @@ function makeCard() {
 // 카드 섞기(피셔예이츠 셔플)
 function shuffle() {
   for (let i = 0; i < 36; ++i) {
+    //console.log("cardType.length: " + cardType.length);
     const random = Math.floor(Math.random() * cardType.length);
     //console.log(random);
     const spliceArray = cardType.splice(random, 1);
@@ -72,45 +72,30 @@ function onclickCard(e) {
   //클릭한 요소의 index 구하기 -> https://gurtn.tistory.com/134
   const $container = document.querySelectorAll(".container");
 
-  // ...
-  let nodes = [...e.currentTarget.parentElement.children];
-  let containerIndex = nodes.indexOf(e.currentTarget);
-  console.log("containerIndex: " + containerIndex);
+  // (...) 스프레드(전개) 문법 : 하나로 뭉쳐 있는 여러 값들의 집합을 펼쳐서 개별적인 값들의 목록으로 만듦
+  let nodes = [...e.currentTarget.parentElement.children]; //클릭한 요소
+  let clickedCardIndex = nodes.indexOf(e.currentTarget); //클릭한 요소의 index값
+  console.log("clickedCardIndex: " + clickedCardIndex);
 
-  /*
-  $container.forEach((element, index) => {
-    element.onclick = () => {
-      clickedCardIndex = index;
-      //console.log("index: " + index);
-      console.log("clickedCardIndex1: " + clickedCardIndex);
-      return false;
-    };
-    return clickedCardIndex;
-  });
-
-  let flippedCard = await new Promise((resolve) => {
-    if (!shuffledCard[clickedCardIndex]) {
-      console.log(
-        "shuffledCard[clickedCardIndex]_before: " +
-          shuffledCard[clickedCardIndex]
-      );
-      e.currentTarget.classList.toggle("flipped");
-      shuffledCard[clickedCardIndex] = true;
-      console.log(
-        "shuffledCard[clickedCardIndex]_after: " +
-          shuffledCard[clickedCardIndex]
-      );
-    }
-  });
-  console.log("clickedCardIndex2: " + clickedCardIndex);
-  */
+  if (!shuffledCard[clickedCardIndex]) {
+    /*
+    console.log(
+      "shuffledCard[clickedCardIndex]_before: " + shuffledCard[clickedCardIndex]
+    );
+    */
+    e.currentTarget.classList.toggle("flipped"); //카드 뒤집기
+    shuffledCard[clickedCardIndex] = true;
+    /*
+    console.log(
+      "shuffledCard[clickedCardIndex]_after: " + shuffledCard[clickedCardIndex]
+    );
+    */
+  }
 }
 
-/*
-async function autoFlipCard() {
+function autoFlipCard(shuffledCard) {
   //resolve, reject는 비동기 처리 과정에서 성공과 실패를 구분하는 방법
-  
- 
+  /*
   let cardData = document.querySelectorAll(".container");
   let autoFlipPromise = new Promise((resolve, reject) => {
     let autoFlipCard = setInterval(() => {
@@ -124,11 +109,75 @@ async function autoFlipCard() {
       }
     }, 2000);
   });
- 
-  
-}
+ */
+  const $container = document.querySelectorAll(".container");
+  let x = 1;
+  let checkNum = [];
+  let shuffledNum = [];
 
-*/
+  for (let i = 0; i < 36; ++i) {
+    //console.log("shuffledCard[i]: " + shuffledCard[i]);
+    if (shuffledCard[i]) {
+      //console.log("i1: " + i);
+      /*
+      let flippedIndex = i;
+      ((x) => {
+        setTimeout(
+          () => {
+            //console.log("i2: " + i);
+            $container[flippedIndex].classList.toggle("flipped");
+            shuffledCard[flippedIndex] = false;
+          },
+          1000 * x,
+          flippedIndex
+        );
+      })(i);
+      */
+      checkNum.push(i);
+    }
+  }
+  console.log("checkNum: " + checkNum);
+  //console.log("checkNum.length: " + checkNum.length);
+
+  for (let j = 0; j < 18; ++j) {
+    console.log("checkNum.length: " + checkNum.length);
+    const randomNum = Math.floor(Math.random() * checkNum.length);
+    console.log(randomNum);
+    const spliceArrayIndex = checkNum.splice(randomNum, 1);
+    console.log("spliceArrayIndex: " + spliceArrayIndex);
+    shuffledNum.push(spliceArrayIndex[0]);
+  }
+  console.log("shuffledNum: " + shuffledNum);
+  console.log("shuffledNum.length: " + shuffledNum.length);
+
+  //여기 따로 빼는 게 좋을 듯
+  for (let k = 0; k < shuffledNum.length; ++k) {
+    ((x) => {
+      setTimeout(
+        () => {
+          //console.log("i2: " + i);
+          $container[shuffledNum[k]].classList.toggle("flipped");
+          shuffledCard[shuffledNum[k]] = false;
+        },
+        1000 * x,
+        k
+      );
+    })(k);
+  }
+
+  //console.log("shuffledCard[i]: " + shuffledCard[i]);
+  /*
+  //for문은 반복 횟수가 명확할 때,  while문은 반복 횟수가 불명확할 때 주로 사용
+  while (i < 36) {
+    if (shuffledCard[i]) {
+      //$container[i].classList.toggle(".flipped");
+      //shuffledCard[i] = false;
+
+
+    } else break;
+  }
+  */
+}
 
 function startGame() {
   makeCard();
@@ -139,7 +188,7 @@ function startGame() {
     playCardGame.addEventListener("click", onclickCard);
     $frame.append(playCardGame);
   }
-  //autoFlipCard();
+  autoFlipCard(shuffledCard);
 }
 
 // 게임 초기화
