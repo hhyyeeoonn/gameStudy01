@@ -1,8 +1,10 @@
 const $frame = document.querySelector("#frame");
 
+let $container = [];
 let cardType = [];
 let shuffledCard = [];
 let clickedCardIndex = 0;
+let setTimeoutId = "";
 
 // 카드 배열 만들기
 function makeCard() {
@@ -31,8 +33,7 @@ function createCard(i) {
   const container = document.createElement("div");
   container.className = "container";
   //container.dataset.indexNumber = i + 1;
-  //div의 data-card-value값이 true면 앞면
-  //container.dataset.cardValue = shuffledCard[i];
+
   //중요 데이터는 수정가능성이 있으니 태그에 넣지 말기
   const card = document.createElement("div");
   card.className = "card";
@@ -56,21 +57,19 @@ function createCard(i) {
   }
 
   //document.write(shuffledCard);
+  //$container = document.querySelectorAll(".container");
   return container;
 }
 
 // 카드 클릭 이벤트 만들기
 function onclickCard(e) {
   //target 은 이벤트가 시작된 위치(태그), currentTarget 은 이벤트 핸들러와 연결된 위치(태그)
-  //console.log(e.currentTarget.value);
-  /*
-  if (e.target.className === "card__back") {
-    e.currentTarget.classList.toggle("flipped");
-    e.currentTarget.dataset.cardValue = true;
-  }
-  */
+  //e.target은 card__front/card__back을 가리키고 e.currentTarget은 container를 가리킨다
+  //str.dataset.strValue div의 data value값 넣기
+
   //클릭한 요소의 index 구하기 -> https://gurtn.tistory.com/134
-  const $container = document.querySelectorAll(".container");
+  $container = document.querySelectorAll(".container");
+  console.log("$container1: " + $container[0]);
 
   // (...) 스프레드(전개) 문법 : 하나로 뭉쳐 있는 여러 값들의 집합을 펼쳐서 개별적인 값들의 목록으로 만듦
   let nodes = [...e.currentTarget.parentElement.children]; //클릭한 요소
@@ -93,69 +92,49 @@ function onclickCard(e) {
   }
 }
 
-function autoFlipCard(shuffledCard) {
-  //resolve, reject는 비동기 처리 과정에서 성공과 실패를 구분하는 방법
-  /*
-  let cardData = document.querySelectorAll(".container");
-  let autoFlipPromise = new Promise((resolve, reject) => {
-    let autoFlipCard = setInterval(() => {
-      for (let i = 0; i < 36; ++i) {
-        if (cardData[i].dataset.cardValue) {
-          cardData[i].dataset.cardValue = false;
-          cardData[i].classList.toggle("flipped");
-        } else {
-          clearInterval(autoFlipCard);
-        }
-      }
-    }, 2000);
-  });
- */
-  const $container = document.querySelectorAll(".container");
-  let x = 1;
-  let checkNum = [];
-  let shuffledNum = [];
+let shuffledNum = [];
 
+function getCardIndex(shuffledCard) {
+  $container = document.querySelectorAll(".container");
+  console.log("$container2: " + $container[0]);
+
+  let checkNum = [];
+  let indexLength = 0;
+  //let isAutoFlipDone = false;
+
+  //무작위로 카드를 뒤집기 위해 인덱스 배열을 만드는 코드
   for (let i = 0; i < 36; ++i) {
-    //console.log("shuffledCard[i]: " + shuffledCard[i]);
     if (shuffledCard[i]) {
-      //console.log("i1: " + i);
-      /*
-      let flippedIndex = i;
-      ((x) => {
-        setTimeout(
-          () => {
-            //console.log("i2: " + i);
-            $container[flippedIndex].classList.toggle("flipped");
-            shuffledCard[flippedIndex] = false;
-          },
-          1000 * x,
-          flippedIndex
-        );
-      })(i);
-      */
       checkNum.push(i);
     }
-  }
-  console.log("checkNum: " + checkNum);
-  //console.log("checkNum.length: " + checkNum.length);
 
-  for (let j = 0; j < 18; ++j) {
-    console.log("checkNum.length: " + checkNum.length);
+    if (i === 35) {
+      indexLength = checkNum.length;
+    }
+  }
+
+  for (let j = 0; j < indexLength; ++j) {
     const randomNum = Math.floor(Math.random() * checkNum.length);
-    console.log(randomNum);
     const spliceArrayIndex = checkNum.splice(randomNum, 1);
-    console.log("spliceArrayIndex: " + spliceArrayIndex);
     shuffledNum.push(spliceArrayIndex[0]);
   }
-  console.log("shuffledNum: " + shuffledNum);
-  console.log("shuffledNum.length: " + shuffledNum.length);
 
-  //여기 따로 빼는 게 좋을 듯
+  return shuffledNum;
+}
+
+function autoFlipCard(shuffledCard) {
+  getCardIndex(shuffledCard);
+  $container = document.querySelectorAll(".container");
+  console.log("$container3: " + $container[0]);
+
+  let indexLength = shuffledNum.length;
+  console.log("indexLength: " + indexLength);
+  //만들어진 인덱스 배열을 이용하여 자동으로 카드를 뒤집는 코드
   for (let k = 0; k < shuffledNum.length; ++k) {
-    ((x) => {
+    console.log("k: " + k);
+    setTimeoutId = ((x) => {
       setTimeout(
         () => {
-          //console.log("i2: " + i);
           $container[shuffledNum[k]].classList.toggle("flipped");
           shuffledCard[shuffledNum[k]] = false;
         },
@@ -163,22 +142,20 @@ function autoFlipCard(shuffledCard) {
         k
       );
     })(k);
+    /*
+    if (k === 17) {
+      isAutoFlipDone = true;
+    }
+    console.log("isAutoFlipDone: " + isAutoFlipDone);
+    */
   }
-
-  //console.log("shuffledCard[i]: " + shuffledCard[i]);
-  /*
-  //for문은 반복 횟수가 명확할 때,  while문은 반복 횟수가 불명확할 때 주로 사용
-  while (i < 36) {
-    if (shuffledCard[i]) {
-      //$container[i].classList.toggle(".flipped");
-      //shuffledCard[i] = false;
-
-
-    } else break;
-  }
-  */
 }
 
+/*
+function reloadAutoFlipCard() {
+  setInterval(() => autoFlipCard(shuffledCard), 1000 * 15);
+}
+*/
 function startGame() {
   makeCard();
   shuffle();
@@ -189,6 +166,7 @@ function startGame() {
     $frame.append(playCardGame);
   }
   autoFlipCard(shuffledCard);
+  //reloadAutoFlipCard(shuffledCard);
 }
 
 // 게임 초기화
@@ -196,12 +174,16 @@ function init() {
   $frame.innerHTML = "";
   cardType = [];
   shuffledCard = [];
+  clickedCardIndex = 0;
+  shuffledNum = [];
+  $container = [];
   startGame();
 }
 
 //게임 다시 시작하기
 function restartBtnClick() {
   document.querySelector(".restartBtn").onclick = () => init();
+  clearTimeout(setTimeoutId);
 }
 
 //페이지 로드 시 자동 실행
