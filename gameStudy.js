@@ -1,6 +1,5 @@
 const $frame = document.querySelector("#frame");
 
-let $container = [];
 let cardType = [];
 let shuffledCard = [];
 let clickedCardIndex = 0;
@@ -56,8 +55,6 @@ function createCard(i) {
     cardFront.style.transform = "rotateY(180deg)";
   }
 
-  //document.write(shuffledCard);
-  //$container = document.querySelectorAll(".container");
   return container;
 }
 
@@ -68,7 +65,7 @@ function onclickCard(e) {
   //str.dataset.strValue div의 data value값 넣기
 
   //클릭한 요소의 index 구하기 -> https://gurtn.tistory.com/134
-  $container = document.querySelectorAll(".container");
+  const $container = document.querySelectorAll(".container");
   console.log("$container1: " + $container[0]);
 
   // (...) 스프레드(전개) 문법 : 하나로 뭉쳐 있는 여러 값들의 집합을 펼쳐서 개별적인 값들의 목록으로 만듦
@@ -95,7 +92,7 @@ function onclickCard(e) {
 let shuffledNum = [];
 
 function getCardIndex(shuffledCard) {
-  $container = document.querySelectorAll(".container");
+  const $container = document.querySelectorAll(".container");
   console.log("$container2: " + $container[0]);
 
   let checkNum = [];
@@ -124,11 +121,12 @@ function getCardIndex(shuffledCard) {
 
 function autoFlipCard(shuffledCard) {
   getCardIndex(shuffledCard);
-  $container = document.querySelectorAll(".container");
+  const $container = document.querySelectorAll(".container");
   console.log("$container3: " + $container[0]);
 
   let indexLength = shuffledNum.length;
   console.log("indexLength: " + indexLength);
+
   //만들어진 인덱스 배열을 이용하여 자동으로 카드를 뒤집는 코드
   for (let k = 0; k < shuffledNum.length; ++k) {
     console.log("k: " + k);
@@ -170,7 +168,7 @@ function startGame() {
 }
 
 // 게임 초기화
-function init() {
+function restartGame() {
   $frame.innerHTML = "";
   cardType = [];
   shuffledCard = [];
@@ -182,7 +180,7 @@ function init() {
 
 //게임 다시 시작하기
 function restartBtnClick() {
-  document.querySelector(".restartBtn").onclick = () => init();
+  document.querySelector(".restartBtn").onclick = () => restartGame();
   clearTimeout(setTimeoutId);
 }
 
